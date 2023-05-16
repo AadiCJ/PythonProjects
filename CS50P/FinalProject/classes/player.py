@@ -2,7 +2,18 @@ import sys
 
 
 class Player:
-    def __init__(self, user, money=0, squirrel=0, dwarf=0, plant=0, robot=0, printer=0, goose=0, midas=1):
+    def __init__(
+        self,
+        user,
+        money=0,
+        squirrel=0,
+        dwarf=0,
+        plant=0,
+        robot=0,
+        printer=0,
+        goose=0,
+        midas=1,
+    ):
         self.user = user
         self.money = money
         self.squirrel = squirrel
@@ -28,8 +39,7 @@ class Player:
             "goose": self.goose,
             "midas": self.midas,
         }
-        
-        
+
     @classmethod
     def make(self, dict):
         user = dict["user"]
@@ -41,9 +51,8 @@ class Player:
         printer = dict["printer"]
         goose = dict["goose"]
         midas = dict["midas"]
-        
+
         return Player(user, money, squirrel, dwarf, plant, robot, printer, goose, midas)
-        
 
     @property
     def user(self):
@@ -92,7 +101,7 @@ class Player:
     @printer.setter
     def printer(self, printer):
         self._printer = printer
-        
+
     @property
     def plant(self):
         return self._plant
@@ -100,7 +109,7 @@ class Player:
     @plant.setter
     def plant(self, plant):
         self._plant = plant
-        
+
     @property
     def goose(self):
         return self._goose
@@ -108,7 +117,7 @@ class Player:
     @goose.setter
     def goose(self, goose):
         self._goose = goose
-        
+
     @property
     def midas(self):
         return self._midas
