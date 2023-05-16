@@ -7,6 +7,7 @@ TODO: after loading/creating new game launch the game
 from tkinter import *
 from classes.player import Player
 from save import load
+from game import start
 
 HEIGHT = 900
 WIDTH = 1200
@@ -68,8 +69,11 @@ def callLoad():
         
     if p:
         errLabel.config(text="Player loaded.\nYou may now close this")
+        launchGame(p)
 
 
+def launchGame(player):
+    start(player)
     
     
 
