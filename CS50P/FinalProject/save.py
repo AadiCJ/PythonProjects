@@ -4,8 +4,7 @@ Python script to handle saving and loading of game
 import csv
 import sys
 
-sys.path.insert(0, "../classes")
-from player import Player
+from classes.player import Player
 
 with open("saves.csv") as readFile:
     reader = csv.DictReader(readFile)
@@ -41,7 +40,6 @@ def save(playerObj):
 
 
 def load(username):
-    # TODO: implement loading
     for line in lines:
         if line["user"] == username:
             return Player.make(line)
