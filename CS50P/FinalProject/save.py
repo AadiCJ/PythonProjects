@@ -43,7 +43,8 @@ def load(username):
     for line in lines:
         if line["user"] == username:
             return Player.make(line)
-
+    raise ValueError("Player not found")
+    
 
 if __name__ == "__main__":
     main("load", Player("Doggo"))
