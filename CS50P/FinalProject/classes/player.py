@@ -14,7 +14,7 @@ class Player:
         goose=0,
         midas=1,
     ):
-        self.user = user
+        self.user = user.strip()
         self.money = money
         self.squirrel = squirrel
         self.dwarf = dwarf

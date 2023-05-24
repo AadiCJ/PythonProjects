@@ -9,15 +9,13 @@ from classes.player import Player
 from save import load
 from game import start
 
-HEIGHT = 900
-WIDTH = 1200
+HEIGHT = 518
+WIDTH = 900
 FONT = ("Helvetica", 25, "bold")
 RELIEF = "groove"
 BD = 2
 
-# since the actual increae can skyrocket, for each buyable, save D
-# in the actual game code file. N is already stored in the player class
-# price increase = current price + nth term of an ap
+# new price = current price + a fixed increase
 
 
 def main():
@@ -31,11 +29,12 @@ def launch():
     mainMenu.update_idletasks()
 
     mainMenu.geometry(f"{WIDTH}x{HEIGHT}+0+0")
+    mainMenu.title("Main Menu")
 
     newGame = Button(
-        mainMenu, text="Start a new Game!", font=FONT, relief=RELIEF, bd=BD
+        mainMenu, text="Start a new Game!", font=FONT, relief=RELIEF, bd=BD, command=newGameMenu
     )
-    newGame.place(x=(WIDTH / 2 - 191), y=75)
+    newGame.place(x=(WIDTH / 2 - 180), y=75)
 
     load = Button(
         mainMenu,
@@ -47,24 +46,56 @@ def launch():
     )
     load.place(x=(WIDTH / 2 - 138), y=200)
 
+
+    exitButton = Button(mainMenu, text="Exit", font=FONT, relief=RELIEF, command=lambda:mainMenu.destroy())
+    exitButton.place(x=(WIDTH/2)-70, y=325)
+
     mainMenu.resizable(False, False)
     mainMenu.mainloop()
 
 
+
+def newGameMenu():
+    newGame = Toplevel(mainMenu)
+    newGame.geometry(f"{round(WIDTH/2)}x{round(HEIGHT/2)}+0+0")
+    
+    global label
+    label = Label(newGame, font=FONT)
+    label.place(x=55)
+
+    global userName
+    userName = Entry(newGame, font=FONT)
+    userName.place(x=55, y=50)
+
+    button = Button(newGame, text="Begin!", font=FONT, command=callStart)
+    button.place(x=55, y=100)
+
+
+def callStart():
+    user = userName.get()
+    try:
+        p = load(user)
+    except ValueError:
+        label.config(text="Starting!")
+        launchGame(Player(user))
+    else:
+        label.config(text="Player exists. Try loading instead")
+
+
 def loadMenuLaunch():
     loadMenu = Toplevel(mainMenu)
-    loadMenu.config(width=WIDTH / 2, height=HEIGHT / 2)
+    loadMenu.geometry(f"{round(WIDTH/2)}x{round(HEIGHT/2)}+0+0")
 
-    global errLabel
-    errLabel = Label(loadMenu, font=FONT)
-    errLabel.place(x=69)
+    global label
+    label = Label(loadMenu, font=FONT)
+    label.place(x=55)
 
     global userName
     userName = Entry(loadMenu, font=FONT)
-    userName.place(x=69, y=100)
+    userName.place(x=55, y=50)
 
     button = Button(loadMenu, text="Load!", font=FONT, command=callLoad)
-    button.place(x=69, y=150)
+    button.place(x=55, y=100)
 
 
 def callLoad():
@@ -72,15 +103,17 @@ def callLoad():
     try:
         p = load(user)
     except ValueError:
-        errLabel.config(text="Player not found")
+        label.config(text="Player not found")
         return
-
+    
     if p:
-        errLabel.config(text="Player loaded.\nYou may now close this")
+        label.config(text="Player loaded.")
         launchGame(p)
+        
 
 
 def launchGame(player):
+    mainMenu.destroy()
     start(player)
 
 

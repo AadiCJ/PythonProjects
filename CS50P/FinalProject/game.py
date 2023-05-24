@@ -8,6 +8,7 @@ from PIL import ImageOps
 from PIL import ImageTk
 from save import save
 from save import load
+from classes.player import Player
 
 money = {
     "noteSingle": None,
@@ -27,22 +28,22 @@ buyable = {
 
 
 
-HEIGHT = 900
-WIDTH = 1200
+HEIGHT = 518
+WIDTH = 900
 FONT = ("Helvetica", 25, "bold")
 RELIEF = "groove"
 BD = 2
-buyMode = True
+buying = True
 buyAmount = 1
-
-game = Tk()
 
 
 def start(playerIn):
+    global game
+    game = Tk()
     global player
     player = playerIn
     getResources()
-    game.mainloop()
+
     statusBar = Label(game, text="", bd=1, relief=SUNKEN, anchor="e")
     
     menubar = Menu(game)
@@ -52,7 +53,7 @@ def start(playerIn):
     menubar.add_cascade(label = "Game", menu=gameMenu)
     gameMenu.add_command(label="Save", command=lambda:save(player))
     gameMenu.add_command(label="Load", command=loading)
-    gameMenu.add_cascade(label="Exit", command=quit)
+    gameMenu.add_cascade(label="Exit", command=saveAndExit)
     
     itemsMenu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Items", menu=itemsMenu)
@@ -62,7 +63,16 @@ def start(playerIn):
     
     statusBar.pack(fill=X, side=BOTTOM, ipady=2)
     
+    
+    
     #TODO: implement the frame
+    game.geometry(f"{WIDTH}x{HEIGHT}+0+0")
+    game.title(f"{player.user}")
+    
+    
+    
+    game.mainloop()
+    
     
 
 
@@ -104,16 +114,24 @@ def setBuyMode():
 def setSellMode():
     buyMode = False
     
+def saveAndExit():
+    save(player)
+    game.destroy()
+"""all misc methods end here"""
 
 
 """ methods to get resources start here """
 def getResources():
     for key in money:
-        temp = ImageOps.fit(Image.open(f"resources\\money\\{key}"), (50, 50))
+        temp = ImageOps.fit(Image.open(fr"resources\money\{key}.png"), (50, 50))
         money[key] = ImageTk.PhotoImage(temp)
     
     for key in buyable:
-        temp = ImageOps.fit(Image.open(f"resources\\buyable\\{key}"), (50, 50))
+        temp = ImageOps.fit(Image.open(fr"resources\buyable\{key}.png"), (50, 50))
         buyable[key] = ImageTk.PhotoImage(temp)
 """methods to get resources end here"""
         
+        
+
+if __name__ == "__main__":
+    start(Player("new player"))
