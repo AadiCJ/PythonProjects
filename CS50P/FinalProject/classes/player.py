@@ -43,14 +43,17 @@ class Player:
     @classmethod
     def make(self, dict):
         user = dict["user"]
-        money = dict["money"]
-        squirrel = dict["squirrel"]
-        dwarf = dict["dwarf"]
-        plant = dict["plant"]
-        robot = dict["robot"]
-        printer = dict["printer"]
-        goose = dict["goose"]
-        midas = dict["midas"]
+        try:
+            money = int(dict["money"])
+            squirrel = int(dict["squirrel"])
+            dwarf = int(dict["dwarf"])
+            plant = int(dict["plant"])
+            robot = int(dict["robot"])
+            printer = int(dict["printer"])
+            goose = int(dict["goose"])
+            midas = int(dict["midas"])
+        except:
+            raise ValueError("File formatted incorrectly")
 
         return Player(user, money, squirrel, dwarf, plant, robot, printer, goose, midas)
 

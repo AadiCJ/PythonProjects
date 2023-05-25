@@ -84,8 +84,17 @@ def start(playerIn):
 
     main.pack()
     clickerFrame.grid(column=0, row=0, rowspan=2, sticky=NW)
+    clickerFrame.pack_propagate(0)
     midasFrame.grid(column=0, row=2, sticky=SW)
+    midasFrame.pack_propagate(0)
     buyFrame.grid(column=1, row=0, columnspan=2, sticky=NE)
+    buyFrame.pack_propagate(0)
+
+    # Widgets
+    clicker = Button(clickerFrame, image=money["noteStack"], command=clicked)
+
+    # pack widgets
+    clicker.pack()
 
     game.resizable(False, False)
     game.mainloop()
@@ -126,7 +135,7 @@ def callLoad():
 """ all loading methods end here """
 
 
-"""all misc methods start here"""
+"""all game methods start here"""
 
 
 def setBuyMode():
@@ -140,9 +149,14 @@ def setSellMode():
 def saveAndExit():
     save(player)
     game.destroy()
+    
+
+def clicked():
+    player.money += 1
+    print(player.money)
 
 
-"""all misc methods end here"""
+"""all game methods end here"""
 
 
 """ methods to get resources start here """
@@ -162,4 +176,4 @@ def getResources():
 
 
 if __name__ == "__main__":
-    start(Player("new player"))
+    start(load("new player"))
