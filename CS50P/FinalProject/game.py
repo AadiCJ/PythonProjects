@@ -12,14 +12,7 @@ from classes.player import Player
 from time import sleep
 from threading import Thread
 
-money = {
-    "noteSingle": None,
-    "noteStack": None,
-    "singleNoteWaving": None
-}
-
-
-
+money = {"noteSingle": None, "noteStack": None, "singleNoteWaving": None}
 
 
 HEIGHT = 518
@@ -32,7 +25,7 @@ buying = True
 buyAmount = 1
 
 
-def start(playerIn):   
+def start(playerIn):
     global game
     game = Tk()
     global player
@@ -40,19 +33,20 @@ def start(playerIn):
     global running
     running = True
     getResources()
-    frameWork()  
+    frameWork()
     moneyLoop = Thread(target=makeMoney)
     moneyLoop.start()
     updateLoop = Thread(target=updates)
     updateLoop.start()
     game.mainloop()
-    
+
     # TODO: Make all the labels and text variables.
     # TODO: Make the actual money making logic
 
 
-
 """Major methods start here"""
+
+
 def frameWork():
     global statusBar
     statusBar = Label(game, text="", bd=1, relief=SUNKEN, anchor="e")
@@ -71,16 +65,14 @@ def frameWork():
     menubar.add_cascade(label="Items", menu=itemsMenu)
     itemsMenu.add_command(label="Buy", command=setBuyMode)
     itemsMenu.add_command(label="Sell", command=setSellMode)
-    
-    
+
     menubar.add_cascade(label="Money")
 
     statusBar.pack(fill=X, side=BOTTOM, ipady=2)
     global statusText
     statusText = StringVar()
     statusBar.config(textvariable=statusText)
-    statusText.set("Hello, Welcome")
-
+    statusText.set("Welcome to my Clicker Project. Hope you enjoy")
 
     game.geometry(f"{WIDTH}x{HEIGHT}+0+0")
     game.title(f"{player.user}")
@@ -88,14 +80,11 @@ def frameWork():
     # frames
     main = Frame(game, bg="red")
 
-    clickerFrame = Frame(
-        main, width=WIDTH / 3, height=round(2 * (HEIGHT / 3))
-    )
+    clickerFrame = Frame(main, width=WIDTH / 3, height=round(2 * (HEIGHT / 3)))
     midasFrame = Frame(main, bg="yellow", width=WIDTH / 3, height=round(HEIGHT / 3))
     buyFrame = Frame(main, bg="green", width=WIDTH * 2 / 3, height=HEIGHT)
-    buttonsBuyFrame = Frame(buyFrame, height=HEIGHT, width=WIDTH/3)
-    buttonsAmountFrame = Frame(buyFrame, height=HEIGHT, width=WIDTH/3)
-    
+    buttonsBuyFrame = Frame(buyFrame, height=HEIGHT, width=WIDTH / 3)
+    buttonsAmountFrame = Frame(buyFrame, height=HEIGHT, width=WIDTH / 3)
 
     # pack frames
 
@@ -112,9 +101,10 @@ def frameWork():
     buttonsAmountFrame.pack_propagate(0)
 
     # Widgets
-    clicker = Button(clickerFrame, image=money["noteStack"], command=clicked, relief=RELIEF)
-    
-    
+    clicker = Button(
+        clickerFrame, image=money["noteStack"], command=clicked, relief=RELIEF
+    )
+
     buyButtons = {
         Button(buttonsBuyFrame): "squirrel",
         Button(buttonsBuyFrame): "dwarf",
@@ -124,13 +114,19 @@ def frameWork():
         Button(buttonsBuyFrame): "goose",
     }
     for button in buyButtons:
-        button.config(text=buyButtons[button], font=FONT, width=WIDTH/3, height=IMAGE_WIDTH, image=buyable[buyButtons[button]][3], relief=RELIEF)
+        button.config(
+            text=buyButtons[button],
+            font=FONT,
+            width=WIDTH / 3,
+            height=IMAGE_WIDTH,
+            image=buyable[buyButtons[button]][3],
+            relief=RELIEF,
+        )
         button.bind("<Enter>", buttonEnter)
         button.bind("<Leave>", buttonExit)
         button.bind("<Button-1>", buyableClicked)
         button.pack(side=TOP)
-    
-    
+
     global amountLabels
     amountLabels = {
         "squirrel": [Label(buttonsAmountFrame), StringVar()],
@@ -140,26 +136,33 @@ def frameWork():
         "printer": [Label(buttonsAmountFrame), StringVar()],
         "goose": [Label(buttonsAmountFrame), StringVar()],
     }
-    
+
     for key in amountLabels:
         label = amountLabels[key][0]
-        label.config(textvariable=amountLabels[key][1], compound=RIGHT, image=empty, font=FONT, width=WIDTH/3, height=IMAGE_WIDTH, relief=RELIEF)
+        label.config(
+            textvariable=amountLabels[key][1],
+            compound=RIGHT,
+            image=empty,
+            font=FONT,
+            width=WIDTH / 3,
+            height=IMAGE_WIDTH,
+            relief=RELIEF,
+        )
         label.pack(side=TOP)
-    
 
     # pack widgets
     clicker.place(relx=0.5, rely=0.5, anchor=CENTER)
-    
 
-    game.protocol("WM_DELETE_WINDOW", saveAndExit) 
+    game.protocol("WM_DELETE_WINDOW", saveAndExit)
     game.resizable(False, False)
-    
+
+
 def makeMoney():
     totalAdd = 0
     while running:
         for key in buyable:
             totalAdd += player.dictionary()[key] * buyable[key][4]
-        player.money += totalAdd*player.midas
+        player.money += totalAdd * player.midas
         sleep(1)
 
 
@@ -203,8 +206,6 @@ def callLoad():
         label.config(text="Player loaded.")
         game.destroy()
         start(p)
-        
-    
 
 
 """ all loading methods end here """
@@ -226,14 +227,14 @@ def saveAndExit():
     game.destroy()
     global running
     running = False
-    
+
 
 def clicked():
-    #TODO: Make money drop down when clicked. use the other two money sprites.
+    # TODO: Make money drop down when clicked. use the other two money sprites.
     player.money += 1
     update()
-    
-    
+
+
 def buttonEnter(e):
     text = f"{buyable[e.widget.cget('text')][0]}, price: {buyable[e.widget.cget('text')][1]}"
     statusText.set(text)
@@ -241,45 +242,46 @@ def buttonEnter(e):
 
 def buttonExit(e):
     statusText.set("")
-    
+
 
 def buyableClicked(e):
-    name = e.widget.cget('text')
-    if(buying):
+    name = e.widget.cget("text")
+    if buying:
         price = buyable[name][1]
         if player.money >= price:
             addToPlayer(name)
-            player.money-=price
+            player.money -= price
             buyable[name][1] += buyable[name][2]
+            buttonEnter(e)
             update()
         else:
             statusText.set("Not enough money.")
-                    
-                
+
+
 def addToPlayer(name):
-    match(name):
+    match (name):
         case "squirrel":
-            player.squirrel+=buyAmount
+            player.squirrel += buyAmount
         case "dwarf":
-            player.dwarf+=buyAmount
+            player.dwarf += buyAmount
         case "plant":
-            player.plant+=buyAmount
+            player.plant += buyAmount
         case "robot":
-            player.robot+=buyAmount
+            player.robot += buyAmount
         case "printer":
-            player.printer+=buyAmount
+            player.printer += buyAmount
         case "goose":
-            player.goose+=buyAmount
+            player.goose += buyAmount
         case "midas":
-            player.midas*=2
-            
-            
+            player.midas *= 2
+
+
 def update():
     global menubar
     menubar.entryconfig(3, label=f"{player.money}")
     for key in amountLabels:
         textVar = amountLabels[key][1]
-        match(key):
+        match (key):
             case "squirrel":
                 textVar.set(f"{player.squirrel}")
             case "dwarf":
@@ -292,7 +294,7 @@ def update():
                 textVar.set(f"{player.printer}")
             case "goose":
                 textVar.set(f"{player.goose}")
-    
+
 
 """all game methods end here"""
 
@@ -301,35 +303,82 @@ def update():
 
 
 def getResources():
-    #this dict contains all necesarry information about the buyables.
+    # this dict contains all necesarry information about the buyables.
     global buyable
     buyable = {
-        "squirrel": ["Squirrels. Small, cheap and reliable.", 5+player.squirrel*10, 10, None, 1],
-        "dwarf": ["Dwarves. they craft money out of rocks for you", 100+player.dwarf*200, 200, None, 5],
-        "plant": ["Money plants. It's very leaves are money", 500+player.plant*1000, 1000, None, 100],
-        "robot": ["Robots. Manual labour is quite effective.", 5000+player.robot*10000, 10000, None, 250],
-        "printer": ["Printers. Prints money.", 100000+player.printer*200000, 200000, None, 5000],
-        "goose": ["Geese. These geese lay very expensive golden eggs", 500000+player.goose*1000000, 1000000, None, 10000],
-        "midas": ["For every midas you own, your money production doubles", 1000000+player.midas*2000000, 2000000, None, 0],
+        "squirrel": [
+            "Squirrels. Small, cheap and reliable.",
+            5 + player.squirrel * 10,
+            10,
+            None,
+            1,
+        ],
+        "dwarf": [
+            "Dwarves. they craft money out of rocks for you",
+            100 + player.dwarf * 200,
+            200,
+            None,
+            5,
+        ],
+        "plant": [
+            "Money plants. It's very leaves are money",
+            500 + player.plant * 1000,
+            1000,
+            None,
+            100,
+        ],
+        "robot": [
+            "Robots. Manual labour is quite effective.",
+            5000 + player.robot * 10000,
+            10000,
+            None,
+            250,
+        ],
+        "printer": [
+            "Printers. Prints money.",
+            100000 + player.printer * 200000,
+            200000,
+            None,
+            5000,
+        ],
+        "goose": [
+            "Geese. These geese lay very expensive golden eggs",
+            500000 + player.goose * 1000000,
+            1000000,
+            None,
+            10000,
+        ],
+        "midas": [
+            "For every midas you own, your money production doubles",
+            1000000 + player.midas * 2000000,
+            2000000,
+            None,
+            0,
+        ],
     }
-    #The lists:
-    #The 0th index has the description
-    #the 1st index has => base price + amount of thing * increase per buy of thing.
-    #the 2nd index has increase to base price per buy.
-    #the 3rd index contains the image for the buyable.
-    #the 4th index contains the money added per buyable
-    
+    # The lists:
+    # The 0th index has the description
+    # the 1st index has => base price + amount of thing * increase per buy of thing.
+    # the 2nd index has increase to base price per buy.
+    # the 3rd index contains the image for the buyable.
+    # the 4th index contains the money added per buyable
+
     for key in money:
-        temp = ImageOps.fit(Image.open(rf"resources\money\{key}.png"), (IMAGE_WIDTH, IMAGE_WIDTH))
+        temp = ImageOps.fit(
+            Image.open(rf"resources\money\{key}.png"), (IMAGE_WIDTH, IMAGE_WIDTH)
+        )
         money[key] = ImageTk.PhotoImage(temp)
 
     for key in buyable:
-        temp = ImageOps.fit(Image.open(rf"resources\buyable\{key}.png"), (IMAGE_WIDTH, IMAGE_WIDTH))
+        temp = ImageOps.fit(
+            Image.open(rf"resources\buyable\{key}.png"), (IMAGE_WIDTH, IMAGE_WIDTH)
+        )
         buyable[key][3] = ImageTk.PhotoImage(temp)
-        
+
     global empty
-    temp = ImageOps.fit(Image.open(rf"resources\empty\empty.png" ), (1, 1))
+    temp = ImageOps.fit(Image.open(rf"resources\empty\empty.png"), (1, 1))
     empty = ImageTk.PhotoImage(temp)
+
 
 """methods to get resources end here"""
 
