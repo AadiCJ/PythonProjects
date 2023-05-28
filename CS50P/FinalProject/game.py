@@ -9,31 +9,13 @@ from PIL import ImageTk
 from save import save
 from save import load
 from classes.player import Player
+from time import sleep
+from threading import *
 
 money = {
     "noteSingle": None,
     "noteStack": None,
     "singleNoteWaving": None,
-}
-
-buyable = {
-    "dwarf": None,
-    "goose": None,
-    "midas": None,
-    "plant": None,
-    "printer": None,
-    "robot": None,
-    "squirrel": None,
-}
-
-buyableDescriptions = {
-    "dwarf": ["A dwarf to craft money out of rocks for you", 100],
-    "goose": ["A goose that lays very expensive golden eggs", 500000],
-    "midas": ["For every midas you own, your money production doubles", 1000000],
-    "plant": ["A money plant. It's very leaves are money", 500],
-    "printer": ["Prints money.", 100000],
-    "robot": ["Manual labour is quite effective.", 5000],
-    "squirrel": ["Small, cheap and reliable.", 5],
 }
 
 
@@ -52,7 +34,16 @@ def start(playerIn):
     global player
     player = playerIn
     getResources()
+    makeMoney()
+    frameWork()
+    
+    # TODO: Make all the labels and text variables.
+    # TODO: Make the actual money making logic
 
+
+
+"""Major methods start here"""
+def frameWork():
     global statusBar
     statusBar = Label(game, text="", bd=1, relief=SUNKEN, anchor="e")
 
@@ -76,8 +67,6 @@ def start(playerIn):
     statusBar.config(textvariable=statusText)
     statusText.set("Hello, Welcome")
 
-    # TODO: Make all the labels and text variables.
-    # TODO: Make the actual money making logic
 
     game.geometry(f"{WIDTH}x{HEIGHT}+0+0")
     game.title(f"{player.user}")
@@ -131,6 +120,11 @@ def start(playerIn):
     game.protocol("WM_DELETE_WINDOW", saveAndExit) 
     game.resizable(False, False)
     game.mainloop()
+    
+def makeMoney():
+    pass
+    
+"""Major methods end here"""
 
 
 """ All loading methods start here """
@@ -193,7 +187,7 @@ def clicked():
     print(player.money)
 
 def buttonEnter(e):
-    text = f"{buyableDescriptions[e.widget.cget('text')][0]}, price: {buyableDescriptions[e.widget.cget('text')][1]}"
+    text = f"{buyable[e.widget.cget('text')][0]}, price: {buyable[e.widget.cget('text')][1]}"
     statusText.set(text)
 
 
@@ -204,10 +198,15 @@ def buttonExit(e):
 def buyableClicked(e):
     name = e.widget.cget('text')
     if(buying):
-        price = buyableDescriptions[name][1]
+        price = buyable[name][1]
         if player.money >= price:
+            print(price)
             buy(name)
             player.money-=price
+            buyable[name][1] += buyable[name][2]
+            statusText.set(f"owned = {player.dictionary()[name]}")
+        else:
+            statusText.set("Not enough money.")
                     
                 
 def buy(name):
@@ -236,20 +235,37 @@ def buy(name):
 
 
 def getResources():
+        
+    #this dict contains all necesarry information about the buyables.
+    global buyable
+    buyable = {
+        "dwarf": ["A dwarf to craft money out of rocks for you", 100+player.dwarf*200, 200, None],
+        "goose": ["A goose that lays very expensive golden eggs", 500000+player.goose*1000000, 1000000, None],
+        "midas": ["For every midas you own, your money production doubles", 1000000+player.midas*2000000, 2000000, None],
+        "plant": ["A money plant. It's very leaves are money", 500+player.plant*1000, 1000, None],
+        "printer": ["Prints money.", 100000+player.printer*200000, 200000, None],
+        "robot": ["Manual labour is quite effective.", 5000+player.robot*10000, 10000, None],
+        "squirrel": ["Small, cheap and reliable.", 5+player.squirrel*10, 10, None],
+    }
+    #The lists:
+    #The 0th index has the description
+    #the 1st index has => base price + amount of thing * increase per buy of thing.
+    #the 2nd index has increase to base price per buy.
+    #the 3rd index contains the image for the buyable.
+
     for key in money:
         temp = ImageOps.fit(Image.open(rf"resources\money\{key}.png"), (50, 50))
         money[key] = ImageTk.PhotoImage(temp)
 
     for key in buyable:
         temp = ImageOps.fit(Image.open(rf"resources\buyable\{key}.png"), (50, 50))
-        buyable[key] = ImageTk.PhotoImage(temp)
-
+        buyable[key][3] = ImageTk.PhotoImage(temp)
 
 """methods to get resources end here"""
 
 
 if __name__ == "__main__":
     try:
-        start(load("new player"))
+        start(load("debug"))
     except ValueError:
-        start(Player("new player"))
+        start(Player("debug"))
