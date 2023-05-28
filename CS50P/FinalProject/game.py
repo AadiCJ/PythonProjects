@@ -10,13 +10,16 @@ from save import save
 from save import load
 from classes.player import Player
 from time import sleep
-from threading import *
+from threading import Thread
 
 money = {
     "noteSingle": None,
     "noteStack": None,
-    "singleNoteWaving": None,
+    "singleNoteWaving": None
 }
+
+
+
 
 
 HEIGHT = 518
@@ -28,14 +31,18 @@ buying = True
 buyAmount = 1
 
 
-def start(playerIn):
+def start(playerIn):   
     global game
     game = Tk()
     global player
     player = playerIn
+    global running
+    running = True
     getResources()
-    makeMoney()
-    frameWork()
+    frameWork()  
+    moneyLoop = Thread(target=makeMoney)
+    moneyLoop.start()
+    game.mainloop()
     
     # TODO: Make all the labels and text variables.
     # TODO: Make the actual money making logic
@@ -47,6 +54,7 @@ def frameWork():
     global statusBar
     statusBar = Label(game, text="", bd=1, relief=SUNKEN, anchor="e")
 
+    global menubar
     menubar = Menu(game)
     game.config(menu=menubar)
 
@@ -60,6 +68,9 @@ def frameWork():
     menubar.add_cascade(label="Items", menu=itemsMenu)
     itemsMenu.add_command(label="Buy", command=setBuyMode)
     itemsMenu.add_command(label="Sell", command=setSellMode)
+    
+    
+    menubar.add_cascade(label="Money")
 
     statusBar.pack(fill=X, side=BOTTOM, ipady=2)
     global statusText
@@ -119,11 +130,17 @@ def frameWork():
 
     game.protocol("WM_DELETE_WINDOW", saveAndExit) 
     game.resizable(False, False)
-    game.mainloop()
     
 def makeMoney():
-    pass
-    
+    global menubar
+    totalAdd = 0
+    while running:
+        for key in buyable:
+            totalAdd += player.dictionary()[key] * buyable[key][4]
+        player.money += totalAdd*player.midas
+        menubar.entryconfig(3, label=f"{player.money}")
+        sleep(1)
+
 """Major methods end here"""
 
 
@@ -179,13 +196,16 @@ def setSellMode():
 def saveAndExit():
     save(player)
     game.destroy()
+    global running
+    running = False
     
 
 def clicked():
     #TODO: Make money drop down when clicked. use the other two money sprites.
     player.money += 1
-    print(player.money)
-
+    menubar.entryconfig(3, label=f"{player.money}") 
+    
+    
 def buttonEnter(e):
     text = f"{buyable[e.widget.cget('text')][0]}, price: {buyable[e.widget.cget('text')][1]}"
     statusText.set(text)
@@ -235,24 +255,24 @@ def buy(name):
 
 
 def getResources():
-        
     #this dict contains all necesarry information about the buyables.
     global buyable
     buyable = {
-        "dwarf": ["A dwarf to craft money out of rocks for you", 100+player.dwarf*200, 200, None],
-        "goose": ["A goose that lays very expensive golden eggs", 500000+player.goose*1000000, 1000000, None],
-        "midas": ["For every midas you own, your money production doubles", 1000000+player.midas*2000000, 2000000, None],
-        "plant": ["A money plant. It's very leaves are money", 500+player.plant*1000, 1000, None],
-        "printer": ["Prints money.", 100000+player.printer*200000, 200000, None],
-        "robot": ["Manual labour is quite effective.", 5000+player.robot*10000, 10000, None],
-        "squirrel": ["Small, cheap and reliable.", 5+player.squirrel*10, 10, None],
+        "dwarf": ["A dwarf to craft money out of rocks for you", 100+player.dwarf*200, 200, None, 5],
+        "goose": ["A goose that lays very expensive golden eggs", 500000+player.goose*1000000, 1000000, None, 10000],
+        "midas": ["For every midas you own, your money production doubles", 1000000+player.midas*2000000, 2000000, None, 0],
+        "plant": ["A money plant. It's very leaves are money", 500+player.plant*1000, 1000, None, 100],
+        "printer": ["Prints money.", 100000+player.printer*200000, 200000, None, 5000],
+        "robot": ["Manual labour is quite effective.", 5000+player.robot*10000, 10000, None, 250],
+        "squirrel": ["Small, cheap and reliable.", 5+player.squirrel*10, 10, None, 1],
     }
     #The lists:
     #The 0th index has the description
     #the 1st index has => base price + amount of thing * increase per buy of thing.
     #the 2nd index has increase to base price per buy.
     #the 3rd index contains the image for the buyable.
-
+    #the 4th index contains the money added per buyable
+    
     for key in money:
         temp = ImageOps.fit(Image.open(rf"resources\money\{key}.png"), (50, 50))
         money[key] = ImageTk.PhotoImage(temp)
