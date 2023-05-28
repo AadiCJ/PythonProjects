@@ -93,8 +93,8 @@ def frameWork():
     )
     midasFrame = Frame(main, bg="yellow", width=WIDTH / 3, height=round(HEIGHT / 3))
     buyFrame = Frame(main, bg="green", width=WIDTH * 2 / 3, height=HEIGHT)
-    buttonsBuyFrame = Frame(buyFrame, height=HEIGHT, width=IMAGE_WIDTH*3)
-    buttonsAmountFrame = Frame(buyFrame, bg="blue", height=HEIGHT, width=IMAGE_WIDTH*2)
+    buttonsBuyFrame = Frame(buyFrame, height=HEIGHT, width=WIDTH/3)
+    buttonsAmountFrame = Frame(buyFrame, height=HEIGHT, width=WIDTH/3)
     
 
     # pack frames
@@ -112,7 +112,7 @@ def frameWork():
     buttonsAmountFrame.pack_propagate(0)
 
     # Widgets
-    clicker = Button(clickerFrame, image=money["noteStack"], command=clicked)
+    clicker = Button(clickerFrame, image=money["noteStack"], command=clicked, relief=RELIEF)
     
     
     buyButtons = {
@@ -124,7 +124,7 @@ def frameWork():
         Button(buttonsBuyFrame): "goose",
     }
     for button in buyButtons:
-        button.config(text=buyButtons[button], font=FONT, width=IMAGE_WIDTH*3, height=IMAGE_WIDTH, image=buyable[buyButtons[button]][3])
+        button.config(text=buyButtons[button], font=FONT, width=WIDTH/3, height=IMAGE_WIDTH, image=buyable[buyButtons[button]][3], relief=RELIEF)
         button.bind("<Enter>", buttonEnter)
         button.bind("<Leave>", buttonExit)
         button.bind("<Button-1>", buyableClicked)
@@ -143,7 +143,7 @@ def frameWork():
     
     for key in amountLabels:
         label = amountLabels[key][0]
-        label.config(textvariable=amountLabels[key][1], compound=RIGHT, image=empty, font=FONT, width=IMAGE_WIDTH*2, height=IMAGE_WIDTH)
+        label.config(textvariable=amountLabels[key][1], compound=RIGHT, image=empty, font=FONT, width=WIDTH/3, height=IMAGE_WIDTH, relief=RELIEF)
         label.pack(side=TOP)
     
 
@@ -304,12 +304,12 @@ def getResources():
     #this dict contains all necesarry information about the buyables.
     global buyable
     buyable = {
-        "squirrel": ["Small, cheap and reliable.", 5+player.squirrel*10, 10, None, 1],
-        "dwarf": ["A dwarf to craft money out of rocks for you", 100+player.dwarf*200, 200, None, 5],
-        "plant": ["A money plant. It's very leaves are money", 500+player.plant*1000, 1000, None, 100],
-        "robot": ["Manual labour is quite effective.", 5000+player.robot*10000, 10000, None, 250],
-        "printer": ["Prints money.", 100000+player.printer*200000, 200000, None, 5000],
-        "goose": ["A goose that lays very expensive golden eggs", 500000+player.goose*1000000, 1000000, None, 10000],
+        "squirrel": ["Squirrels. Small, cheap and reliable.", 5+player.squirrel*10, 10, None, 1],
+        "dwarf": ["Dwarves. they craft money out of rocks for you", 100+player.dwarf*200, 200, None, 5],
+        "plant": ["Money plants. It's very leaves are money", 500+player.plant*1000, 1000, None, 100],
+        "robot": ["Robots. Manual labour is quite effective.", 5000+player.robot*10000, 10000, None, 250],
+        "printer": ["Printers. Prints money.", 100000+player.printer*200000, 200000, None, 5000],
+        "goose": ["Geese. These geese lay very expensive golden eggs", 500000+player.goose*1000000, 1000000, None, 10000],
         "midas": ["For every midas you own, your money production doubles", 1000000+player.midas*2000000, 2000000, None, 0],
     }
     #The lists:
