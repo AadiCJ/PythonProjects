@@ -34,8 +34,7 @@ def save(playerObj):
     # headers
     
     found = False  # is true if the user already exists
-    for i in range(len(lines) ):
-        line = lines[i]
+    for i, line in enumerate(lines):
         if line["user"] == data["user"]:
             lines[i] = data # replace the line, writing new data
             found = True
