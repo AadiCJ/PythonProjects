@@ -78,10 +78,10 @@ def frameWork():
     game.title(f"{player.user}")
 
     # frames
-    main = Frame(game, bg="red")
+    main = Frame(game)
 
     clickerFrame = Frame(main, width=WIDTH / 3, height=round(2 * (HEIGHT / 3)))
-    midasFrame = Frame(main, bg="yellow", width=WIDTH / 3, height=round(HEIGHT / 3))
+    midasFrame = Frame(main, bg="yellow", width= WIDTH/3, height = round(HEIGHT/3))
     buyFrame = Frame(main, bg="green", width=WIDTH * 2 / 3, height=HEIGHT)
     buttonsBuyFrame = Frame(buyFrame, height=HEIGHT, width=WIDTH / 3)
     buttonsAmountFrame = Frame(buyFrame, height=HEIGHT, width=WIDTH / 3)
@@ -91,7 +91,7 @@ def frameWork():
     main.pack()
     clickerFrame.grid(column=0, row=0, rowspan=2, sticky=NW)
     clickerFrame.pack_propagate(0)
-    midasFrame.grid(column=0, row=2, sticky=SW)
+    midasFrame.grid(column=0, row=0, sticky=SW)
     midasFrame.pack_propagate(0)
     buyFrame.grid(column=1, row=0, columnspan=2, sticky=NE)
     buyFrame.pack_propagate(0)
@@ -104,6 +104,12 @@ def frameWork():
     clicker = Button(
         clickerFrame, image=money["noteStack"], command=clicked, relief=RELIEF
     )
+    
+    midasButton = Button(midasFrame, text="midas", image=buyable["midas"][3])
+    midasButton.bind("<Enter>", buttonEnter)
+    midasButton.bind("<Leave>", buttonExit)
+    midasButton.bind("<Button-1>", buyableClicked)
+    
 
     buyButtons = {
         Button(buttonsBuyFrame): "squirrel",
@@ -152,6 +158,7 @@ def frameWork():
 
     # pack widgets
     clicker.place(relx=0.5, rely=0.5, anchor=CENTER)
+    midasButton.pack()
 
     game.protocol("WM_DELETE_WINDOW", saveAndExit)
     game.resizable(False, False)
@@ -163,7 +170,6 @@ def makeMoney():
         for key in buyable:
             totalAdd += player.dictionary()[key] * buyable[key][4]
         player.money += totalAdd * player.midas
-        print()
         sleep(1)
 
 
