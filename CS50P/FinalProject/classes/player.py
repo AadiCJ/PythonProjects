@@ -15,8 +15,8 @@ class Player:
         midas=1,
     ):
         self.user = user.strip()
-        if(user == "debug"):
-            self.money=500000000000
+        if user == "debug":
+            self.money = 500000000000
         else:
             self.money = money
         self.squirrel = squirrel

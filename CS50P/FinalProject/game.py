@@ -19,6 +19,7 @@ HEIGHT = 518
 WIDTH = 900
 IMAGE_WIDTH = 75
 FONT = ("Helvetica", 25, "bold")
+FONT_SMALL = ("Helvetica", 17, "bold")
 RELIEF = "groove"
 BD = 2
 buying = True
@@ -81,8 +82,9 @@ def frameWork():
     main = Frame(game)
 
     clickerFrame = Frame(main, width=WIDTH / 3, height=round(2 * (HEIGHT / 3)))
-    midasFrame = Frame(main, bg="yellow", width= WIDTH/3, height = round(HEIGHT/3))
-    buyFrame = Frame(main, bg="green", width=WIDTH * 2 / 3, height=HEIGHT)
+    midasFrame = Frame(main, width=WIDTH / 3, height=round(HEIGHT / 3))
+    buyAmountFrame = Frame(midasFrame, width=WIDTH / 6)
+    buyFrame = Frame(main, width=WIDTH * 2 / 3, height=HEIGHT)
     buttonsBuyFrame = Frame(buyFrame, height=HEIGHT, width=WIDTH / 3)
     buttonsAmountFrame = Frame(buyFrame, height=HEIGHT, width=WIDTH / 3)
 
@@ -93,23 +95,38 @@ def frameWork():
     clickerFrame.pack_propagate(0)
     midasFrame.grid(column=0, row=0, sticky=SW)
     midasFrame.pack_propagate(0)
+    midasFrame.grid_columnconfigure(0, weight=1)
+    midasFrame.grid_columnconfigure(1, weight=1)
     buyFrame.grid(column=1, row=0, columnspan=2, sticky=NE)
     buyFrame.pack_propagate(0)
     buttonsBuyFrame.pack(side="right")
     buttonsBuyFrame.pack_propagate(0)
     buttonsAmountFrame.pack(side="left")
     buttonsAmountFrame.pack_propagate(0)
+    buyAmountFrame.pack(side=LEFT, fill=Y)
+    buyAmountFrame.pack_propagate(0)
 
     # Widgets
     clicker = Button(
         clickerFrame, image=money["noteStack"], command=clicked, relief=RELIEF
     )
-    
+
     midasButton = Button(midasFrame, text="midas", image=buyable["midas"][3])
     midasButton.bind("<Enter>", buttonEnter)
     midasButton.bind("<Leave>", buttonExit)
     midasButton.bind("<Button-1>", buyableClicked)
-    
+
+    global amountEntry
+    amountEntry = Entry(buyAmountFrame, font=FONT_SMALL)
+    amountEntry.pack(side=TOP)
+    submitButton = Button(
+        buyAmountFrame,
+        text="Set Amount",
+        command=submitAmount,
+        font=FONT_SMALL,
+        relief=RELIEF,
+    )
+    submitButton.pack(side=TOP)
 
     buyButtons = {
         Button(buttonsBuyFrame): "squirrel",
@@ -166,7 +183,7 @@ def frameWork():
 
 def makeMoney():
     while running:
-        totalAdd=0
+        totalAdd = 0
         for key in buyable:
             totalAdd += player.dictionary()[key] * buyable[key][4]
         player.money += totalAdd * player.midas
@@ -221,6 +238,14 @@ def callLoad():
 """all game methods start here"""
 
 
+def submitAmount():
+    global amountBuyOrSell
+    global amountEntry
+    inputText = amountEntry.get()
+    if inputText.isdigit():
+        amountBuyOrSell = int(inputText)
+
+
 def setBuyMode():
     global buying
     buying = True
@@ -245,7 +270,7 @@ def clicked():
 
 
 def buttonEnter(e):
-    text = f"{buyable[e.widget.cget('text')][0]}, price: {buyable[e.widget.cget('text')][1]}"
+    text = f"{buyable[e.widget.cget('text')][0]}, price: {buyable[e.widget.cget('text')][1]*amountBuyOrSell}"
     statusText.set(text)
 
 
@@ -256,12 +281,12 @@ def buttonExit(e):
 def buyableClicked(e):
     name = e.widget.cget("text")
     if buying:
-        price = buyable[name][1]
+        price = buyable[name][1] * amountBuyOrSell
         if player.money >= price:
             addToPlayer(name)
             player.money -= price
-            buyable[name][1] += buyable[name][2]
-            if(name == "midas"):
+            buyable[name][1] += buyable[name][2] * amountBuyOrSell
+            if name == "midas":
                 buyable[name][1] *= 2
             buttonEnter(e)
             update()
@@ -291,6 +316,7 @@ def addToPlayer(name):
         case "midas":
             player.midas *= 2
 
+
 def removeFromPlayer(name):
     match (name):
         case "squirrel":
@@ -312,7 +338,7 @@ def removeFromPlayer(name):
             if player.goose > 0:
                 player.goose -= amountBuyOrSell
         case "midas":
-            if(player.midas/2 == int(player.midas/2)):
+            if player.midas / 2 == int(player.midas / 2):
                 player.midas /= 2
 
 

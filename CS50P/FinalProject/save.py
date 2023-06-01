@@ -32,13 +32,13 @@ def save(playerObj):
         "midas",
     ]
     # headers
-    
+
     found = False  # is true if the user already exists
     for i, line in enumerate(lines):
         if line["user"] == data["user"]:
-            lines[i] = data # replace the line, writing new data
+            lines[i] = data  # replace the line, writing new data
             found = True
-    if not found: 
+    if not found:
         lines.append(data)  # add the new user
     with open("saves.csv", "w", newline="") as saveFile:
         writer = csv.DictWriter(saveFile, fieldnames=headers)

@@ -32,7 +32,12 @@ def launch():
     mainMenu.title("Main Menu")
 
     newGame = Button(
-        mainMenu, text="Start a new Game!", font=FONT, relief=RELIEF, bd=BD, command=newGameMenu
+        mainMenu,
+        text="Start a new Game!",
+        font=FONT,
+        relief=RELIEF,
+        bd=BD,
+        command=newGameMenu,
     )
     newGame.place(x=(WIDTH / 2 - 180), y=75)
 
@@ -46,19 +51,23 @@ def launch():
     )
     load.place(x=(WIDTH / 2 - 138), y=200)
 
-
-    exitButton = Button(mainMenu, text="Exit", font=FONT, relief=RELIEF, command=lambda:mainMenu.destroy())
-    exitButton.place(x=(WIDTH/2)-70, y=325)
+    exitButton = Button(
+        mainMenu,
+        text="Exit",
+        font=FONT,
+        relief=RELIEF,
+        command=lambda: mainMenu.destroy(),
+    )
+    exitButton.place(x=(WIDTH / 2) - 70, y=325)
 
     mainMenu.resizable(False, False)
     mainMenu.mainloop()
 
 
-
 def newGameMenu():
     newGame = Toplevel(mainMenu)
     newGame.geometry(f"{round(WIDTH/2)}x{round(HEIGHT/2)}+0+0")
-    
+
     global label
     label = Label(newGame, font=FONT)
     label.place(x=55)
@@ -105,11 +114,10 @@ def callLoad():
     except ValueError:
         label.config(text="Player not found")
         return
-    
+
     if p:
         label.config(text="Player loaded.")
         launchGame(p)
-        
 
 
 def launchGame(player):
