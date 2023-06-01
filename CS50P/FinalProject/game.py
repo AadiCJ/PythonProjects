@@ -11,8 +11,9 @@ from save import load
 from classes.player import Player
 from time import sleep
 from threading import Thread
+from random import randint
 
-money = {"noteSingle": None, "noteStack": None, "singleNoteWaving": None}
+noteStack = None
 
 
 HEIGHT = 518
@@ -24,6 +25,9 @@ RELIEF = "groove"
 BD = 2
 buying = True
 amountBuyOrSell = 1
+animationDelay = 0.0001
+animationDistance = 1
+numImages = 3  # Number of image instances to display
 
 
 def start(playerIn):
@@ -81,6 +85,7 @@ def frameWork():
     # frames
     main = Frame(game)
 
+    global clickerFrame
     clickerFrame = Frame(main, width=WIDTH / 3, height=round(2 * (HEIGHT / 3)))
     midasFrame = Frame(main, width=WIDTH / 3, height=round(HEIGHT / 3))
     buyAmountFrame = Frame(midasFrame, width=WIDTH / 6)
@@ -108,7 +113,7 @@ def frameWork():
 
     # Widgets
     clicker = Button(
-        clickerFrame, image=money["noteStack"], command=clicked, relief=RELIEF
+        clickerFrame, image=noteStack, command=clicked, relief=RELIEF
     )
 
     midasButton = Button(midasFrame, text="midas", image=buyable["midas"][3])
@@ -193,8 +198,7 @@ def makeMoney():
 def updates():
     while running:
         update()
-        sleep(1)
-
+        sleep(0.5)
 
 """Major methods end here"""
 
@@ -429,11 +433,11 @@ def getResources():
     # the 3rd index contains the image for the buyable.
     # the 4th index contains the money added per buyable
 
-    for key in money:
-        temp = ImageOps.fit(
-            Image.open(rf"resources\money\{key}.png"), (IMAGE_WIDTH, IMAGE_WIDTH)
+    temp = ImageOps.fit(
+            Image.open(rf"resources\money\noteStack.png"), (IMAGE_WIDTH, IMAGE_WIDTH)
         )
-        money[key] = ImageTk.PhotoImage(temp)
+    global noteStack
+    noteStack = ImageTk.PhotoImage(temp)
 
     for key in buyable:
         temp = ImageOps.fit(
