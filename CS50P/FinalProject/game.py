@@ -261,6 +261,8 @@ def buyableClicked(e):
             addToPlayer(name)
             player.money -= price
             buyable[name][1] += buyable[name][2]
+            if(name == "midas"):
+                buyable[name][1] *= 2
             buttonEnter(e)
             update()
         else:
@@ -389,7 +391,7 @@ def getResources():
         "midas": [
             "For every midas you own, your money production doubles",
             1000000 + player.midas * 2000000,
-            2000000,
+            0,
             None,
             0,
         ],
