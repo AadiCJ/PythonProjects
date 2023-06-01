@@ -22,7 +22,7 @@ FONT = ("Helvetica", 25, "bold")
 RELIEF = "groove"
 BD = 2
 buying = True
-buyAmount = 1
+amountBuyOrSell = 1
 
 
 def start(playerIn):
@@ -158,11 +158,12 @@ def frameWork():
 
 
 def makeMoney():
-    totalAdd = 0
     while running:
+        totalAdd=0
         for key in buyable:
             totalAdd += player.dictionary()[key] * buyable[key][4]
         player.money += totalAdd * player.midas
+        print()
         sleep(1)
 
 
@@ -215,11 +216,13 @@ def callLoad():
 
 
 def setBuyMode():
-    buyMode = True
+    global buying
+    buying = True
 
 
 def setSellMode():
-    buyMode = False
+    global buying
+    buying = False
 
 
 def saveAndExit():
@@ -256,24 +259,53 @@ def buyableClicked(e):
             update()
         else:
             statusText.set("Not enough money.")
+    if not buying:
+        price = buyable[name][1]
+        player.money += price * amountBuyOrSell
+        removeFromPlayer(name)
+        update()
 
 
 def addToPlayer(name):
     match (name):
         case "squirrel":
-            player.squirrel += buyAmount
+            player.squirrel += amountBuyOrSell
         case "dwarf":
-            player.dwarf += buyAmount
+            player.dwarf += amountBuyOrSell
         case "plant":
-            player.plant += buyAmount
+            player.plant += amountBuyOrSell
         case "robot":
-            player.robot += buyAmount
+            player.robot += amountBuyOrSell
         case "printer":
-            player.printer += buyAmount
+            player.printer += amountBuyOrSell
         case "goose":
-            player.goose += buyAmount
+            player.goose += amountBuyOrSell
         case "midas":
             player.midas *= 2
+
+def removeFromPlayer(name):
+    match (name):
+        case "squirrel":
+            if player.squirrel > 0:
+                player.squirrel -= amountBuyOrSell
+        case "dwarf":
+            if player.dwarf > 0:
+                player.dwarf -= amountBuyOrSell
+        case "plant":
+            if player.plant > 0:
+                player.plant -= amountBuyOrSell
+        case "robot":
+            if player.robot > 0:
+                player.robot -= amountBuyOrSell
+        case "printer":
+            if player.printer > 0:
+                player.printer -= amountBuyOrSell
+        case "goose":
+            if player.goose > 0:
+                player.goose -= amountBuyOrSell
+        case "midas":
+            if(player.midas/2 == int(player.midas/2)):
+                player.midas /= 2
 
 
 def update():
